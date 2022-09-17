@@ -10,6 +10,8 @@ import (
 
 func main() {
 
+	rmq.ReceiveMsgs() // receive RabbitMQ mwssages from 'queue.one' queue
+
 	// HTTP
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		msg := "Hello from GO!"
