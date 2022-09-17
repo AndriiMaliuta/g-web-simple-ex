@@ -3,14 +3,25 @@ package main
 
 import (
 	"fmt"
+	"g-web-simple-ex/rmq"
+	"log"
 	"net/http"
 )
 
 func main() {
 
+	// HTTP
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "HELLO!")
+		msg := "Hello from GO!"
+		fmt.Fprintf(w, msg)
+		err := rmq.SenMsg(msg)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	})
 
-	http.ListenAndServe(":4000", nil)
+	err2 := http.ListenAndServe(":4000", nil)
+	if err2 != nil {
+		log.Fatalln(err2)
+	}
 }
