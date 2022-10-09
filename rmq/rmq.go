@@ -14,7 +14,7 @@ func failOnError(err error, msg string) {
 }
 
 func getConnection() (*amqp.Connection, *amqp.Channel, error) {
-	conn, err := amqp.Dial("amqp://guest:guest@172.17.0.2:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@172.17.0.3:5672/")
 	if err != nil {
 		return nil, nil, err
 	}
@@ -26,18 +26,18 @@ func getConnection() (*amqp.Connection, *amqp.Channel, error) {
 	return conn, ch, nil
 }
 
-func SenMsg(msg string) error {
+func SendMsg(msg string) error {
 	conn, ch, err := getConnection()
 	defer conn.Close()
 	defer ch.Close()
 
 	queue, err := ch.QueueDeclare(
-		"queue.one", // name
-		true,        // durable
-		false,       // delete when unused
-		false,       // exclusive
-		false,       // no-wait
-		nil,         // arguments
+		"words-in", // name
+		true,       // durable
+		false,      // delete when unused
+		false,      // exclusive
+		false,      // no-wait
+		nil,        // arguments
 	)
 	failOnError(err, "Failed to declare a queue")
 
@@ -67,6 +67,7 @@ func ReceiveMsgs() {
 	defer ch.Close()
 
 	que, err := ch.QueueDeclare(
+		//"queue.one", // name
 		"queue.one", // name
 		true,        // durable
 		false,       // delete when unused
@@ -90,7 +91,7 @@ func ReceiveMsgs() {
 
 	go func() {
 		for msg := range msgs {
-			log.Printf("[<<] Received a message from GO: %s", msg.Body)
+			log.Printf("[<<] Received a message :: %s", msg.Body)
 		}
 	}()
 
